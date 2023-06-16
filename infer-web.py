@@ -154,8 +154,27 @@ def vc_single(
     rms_mix_rate,
     protect,
     crepe_hop_length,
-):  # spk_item, input_audio0, vc_transform0,f0_file,f0method0
+):
     global tgt_sr, net_g, vc, hubert_model, version
+    
+    if 'http' in str(f0_file).lower():
+        # Создание папки "downloaded", если ее нет
+        if not os.path.exists("downloaded"):
+            os.makedirs("downloaded")
+        
+        # Получение имени файла из URL-адреса
+        file_name = os.path.basename(f0_file)
+        
+        # Полный путь к скачиваемому файлу
+        downloaded_file_path = os.path.join("downloaded", file_name)
+        
+        # Скачивание файла, если его еще нет в папке "downloaded"
+        if not os.path.exists(downloaded_file_path):
+            urllib.request.urlretrieve(f0_file, downloaded_file_path)
+        
+        # Обновление переменной f0_file
+        f0_file = downloaded_file_path
+        
     if input_audio_path is None:
         return "You need to upload an audio", None
     f0_up_key = int(f0_up_key)
